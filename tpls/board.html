@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block body %}
+    {% include "form.html" %}
+    {% for c in content %}
+        <p><b>{{ c['theme'] }}</b></p>
+        {% if c.get('is_resized_img') %}
+            <p><img src="static/files/resize_{{ c.get('image', '') }}"></p>
+        {% else %}
+            <p><img src="static/files/{{ c.get('image', '') }}"></p>
+        {% end %}
+        <p><a href="{{ c.get('url') }}">К топику</a></p>
+        <p>{{ c['body'] }}</p>
+        <hr>
+    {% end %}
+{% end %}

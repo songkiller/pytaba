@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <style>
+        .active {font: bold 12px/30px Georgia, serif;}
+        .thread-img {height: 300px; width: 300px;}
+        .thread-body {font-size: 18px; background: #2A333C; border: 0px;}
+    </style>
+    <script type="text/javascript" src="{{ get_media('js') }}/jquery.iframe-transport.js"></script>
+    <script type="text/javascript">
+        $(function(){
+
+            //Knockout.js models
+            function TopPanelViewModel() {
+                
+                // Data
+                var self = this;
+                self.boards = ['/b', '/pr', '/po', '/spam'];
+                self.chosenBoardId = ko.observable();
+                self.chosenBoardData = ko.observable();
+             
+
+                // Behaviours
+                self.goToBoard = function(board) {
+                    self.chosenBoardId(board);
+                    $.getJSON(board, function(data) {
+                        self.chosenBoardData(data);
+                        })
+                    };
+                    
+                self.formSubmit = function(form){
+                    //$('#forma').reset();
+                }
+                //self.goToBoard('/po');
+            };
+            var tpvm = new TopPanelViewModel();
+            ko.applyBindings(tpvm);
+            
+            
+            //jquery iframe transport bindings
+            $("#forma").submit(function() {
+                        $.ajax(this.action, {
+                            type: "POST",
+                            url: $('#forma-url').attr('value'),
+                            data: [$(this).serialize()],
+                            files: $(":file", this),
+                            iframe: true,
+                            processData: false
+                        }).complete(function(data) {
+                            $("#fm-body").val('');
+                            $("#fm-image").val('');
+                            tpvm.goToBoard(tpvm.chosenBoardId());
+                        });
+                    });
+            
+        })
+    </script>
+{% end %}
+
+{% block body %}
+    <div class="span12">
+        {% include 'navbar.html' %}
+    </div>
+    <div class="span6">
+        {% include 'form.html' %}
+    </div>
+    <div id="threads-place" data-bind="with: chosenBoardData">
+        <div data-bind="foreach: threads">
+            <div>
+                <div class="span12">
+                    <hr>
+                    <a href="#">[-]</a>
+                    <span data-bind:"text: (file_origin_name)">File: <a href="#" data-bind="text: image"></a>-(103 KB, 900x397, 1349514549761.jpg)</span>
+                </div>
+                <div class="span2">
+                    <img data-bind="attr: {src: 'static/files/resize_'+image}" height="250" width="250">
+                </div>
+                <div class="span6">
+                    <span style="font-family: monospace;" data-bind="text: Date(created)"> Anonymous 12/23/12(Sun)07:21:19   <a href="#">[Reply]</a></span><br/>
+                    <span data-bind="text: body"></span>
+                </div>
+                <div class="span6">
+                    <span style="font-family: cursive;" data-bind="text: number_of_comments">58</span>
+                    <span> posts and <span data-bind="text: comments_with_image">2</span>
+                    <span> image replies omitted. Click <a data-bind="attr: {href: url}">here</a> to view.</span>
+                </div>
+                <div id="comments-place" data-bind="foreach: $data.comments">
+                    <div class="span6 well" style="margin-top: 1px;">
+                        <span style="font-family: monospace;">Anonymous 12/23/12(Sun)16:17:08</span><br/>
+                        <img data-bind="attr: {src: 'static/files/resize_'+image}" height=100 width=100>
+                        <span data-bind="text: body"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div data-bind="if: count_of_pages > 1">
+            <ul>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+    <!-- Must placed paginator here -->
+{% end %}

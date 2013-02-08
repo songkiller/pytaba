@@ -1,0 +1,8 @@
+<div class="navbar">
+    <div class="navbar-inner">
+        <span class="brand">{{ get_opt('project_name') }}</span>
+        <ul class="nav" data-bind="foreach: boards">
+            <li data-bind="css: { active: $data == $root.chosenBoardId() }"><a href="#" data-bind="text: $data, click: $root.goToBoard"></a></li>
+        </ul>
+    </div>
+</div>

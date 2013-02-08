@@ -1,0 +1,16 @@
+{% if action_url %}
+	<form id="forma" action="{{ action_url }}" method="post" enctype="multipart/form-data">
+{% else %}
+	<form id="forma" enctype="multipart/form-data">
+{% end %}
+
+    {% for field in form %}
+        <p>
+            {{ field.label }}
+            {{ field }}
+            <ul class="errors">{% for error in field.errors %}<li>{{ error }}</li>{% end %}</ul>
+        </p>
+    {% end %}
+
+    <input type="submit" value="Send">
+</form>

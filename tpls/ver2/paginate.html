@@ -1,0 +1,7 @@
+<div class="pagination">
+    <ul>
+        {% for i in range(int(page['count_of_pages'])) %}
+            <li {% if page['page'] == i %}>class="active"{% end %}<a href="?page={{ i }}">{{ i }}</a></li>
+        {% end %}
+    </ul>
+</div>

@@ -1,0 +1,17 @@
+<div class="well">
+    <form id="forma" class="form-horizontal" data-bind="submit: formSubmit" enctype="multipart/form-data">
+        <div class="control-group">
+            {% for field in form %}
+                    {{ field.label(class_='control-label') }}
+                    <div class="controls"> 
+                        {{ field }}
+                    </div>
+                    <ul class="errors">{% for error in field.errors %}<li>{{ error }}</li>{% end %}</ul>
+            {% end %}
+        </div>
+        <div class="controls">
+            <input class="btn btn-primary" type="submit" value="Start new thread">
+        </div>
+        <input type="hidden" id="forma-url" data-bind="attr: {value: $root.chosenBoardId()}">
+    </form>
+</div>

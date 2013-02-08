@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block head%}
+	<script src="/static/js/jquery-1.8.2.min.js"></script>
+	<script src="/static/js/socket.io.min.js"></script>
+	
+	<script>
+	WEB_SOCKET_SWF_LOCATION = 'WebSocketMain.swf';
+	
+	$(function(){
+		var socket = io.connect('http://{{ get_opt('domain') }}:8002');
+		
+		socket.on('connect', function(){
+			socket.emit('register_new_participant', {'thread_hash': $('#topic_hash').attr('value')});
+		});
+		
+		socket.on('message', function (data) {
+			var data = jQuery.parseJSON(data);
+			if (data['img']){
+				var img_cmt = '<p><img src="/static/files/'+data['img']+'"></a>'
+			} else {
+				var img_cmt = '';
+			}
+			$('#comments').append(img_cmt + data['comment'] + '</p><hr>');
+	  	});
+	  			
+		socket.on('disconnect', function(){
+			//socket.emit('register_new_participant', {'thread_hash': $('#topic_hash').attr('value')});
+		});
+	  	
+	    $('#forma').submit(function(evt){
+	    	var topic_hash = $('#topic_hash').attr('value');
+	        var comment = $('#fm-body').val();
+	        socket.send(comment+'|||'+img+'|||'+topic_hash);
+	        $('#fm-body').val('');
+	        $('#fm-image').val('');
+	        return false;
+	        });
+	     
+	     var img = ''
+	     $('#fm-image').change(function(evnt){
+	     	var base64_img = '';
+	     	var reader = new FileReader();
+	     	reader.readAsDataURL(evnt.target.files[0]);
+	     	reader.onload = (function(theFile) {
+	      				img = theFile.target.result;
+	      				});
+	     	return false;
+	     })
+	})
+	</script>
+{% end %}
+
+{% block body%}
+    {% include "form.html" %}
+    <input type="hidden" id="topic_hash" value="{{ topic_hash }}">
+    <p>{{ content['body'] }}</p>
+    <hr>
+    <div id="comments">
+	    {% for c in content.get('comments', '') %}
+            {% if c.get('is_resized_img') %}
+                <p><img src="/static/files/resize_{{ c.get('image', '') }}"></p>
+            {% else %}
+                <p><img src="/static/files/{{ c.get('image', '') }}"></p>
+            {% end %}
+            {{ c.get('body') }}
+        {% end %}
+    </div>
+{% end %}

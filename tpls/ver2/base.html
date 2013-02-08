@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <script type="text/javascript" src="{{ get_media("js") }}/knockout-2.2.0.js"></script>
+            <script type="text/javascript" src="{{ get_media("js") }}/jquery-1.8.2.min.js"></script>
+            <script type="text/javascript" src="{{ get_media("js") }}/sammy.js"></script>
+            <link rel="stylesheet" href="{{ get_media("css") }}/bootstrap.min.css">
+            {% block head %}{% end %}
+        </head>
+        <body>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    {% block body %}{% end %}
+                </div>
+            </div>
+        </body>
+    </html>

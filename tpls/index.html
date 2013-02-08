@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block body %}
+    {% for board in boards %}
+        <a href="{{ board.get('url') }}">{{ board.get('url') }}</a>
+    {% end %}
+{% end %}
